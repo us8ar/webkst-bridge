@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WebKSTChat</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    label { display: block; margin-top: 10px; }
+    input, select, button { margin-top: 5px; padding: 5px; }
+    #output { margin-top: 20px; background: #eee; padding: 10px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>WebKSTChat Client</h1>
+
+  <form id="loginForm">
+    <label>
+      Callsign:
+      <input type="text" id="callsign" required>
+    </label>
+    <label>
+      Password:
+      <input type="password" id="password" required>
+    </label>
+    <label>
+      Chat room:
+      <select id="chatId">
+        <option value="1">50/70 MHz</option>
+        <option value="2" selected>144/432 MHz</option>
+        <option value="3">Microwave</option>
+        <option value="4">EME/JT65</option>
+        <option value="5">Low Band</option>
+        <option value="6">50 MHz IARI Region 3</option>
+        <option value="7">50 MHz IARI Region 2</option>
+        <option value="8">144/432 MHz IARU Reg2</option>
+        <option value="9">144/432 MHz IARU Reg3</option>
+        <option value="10">kHz (2000-630m)</option>
+        <option value="11">WARC (30,17,12m)</option>
+        <option value="12">28 MHz</option>
+        <option value="13">40 MHz</option>
+      </select>
+    </label>
+    <button type="submit">Connect</button>
+  </form>
+
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const callsign = document.getElementById("callsign").value;
+      const password = document.getElementById("password").value;
+      const chatId = document.getElementById("chatId").value;
+
+      const res = await fetch("/.netlify/functions/bridge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ callsign, password, chatId })
+      });
+
+      const text = await res.text();
+      document.getElementById("output").textContent = text;
+    });
+  </script>
+</body>
+</html>
